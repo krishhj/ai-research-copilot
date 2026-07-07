@@ -7,16 +7,7 @@ AI Research Copilot backend.
 
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-# Directories 
-BASE_DIR = Path(__file__).resolve().parent[2]
-DATA_DIR = BASE_DIR/"data"
-DATABASE_DIR = DATA_DIR/"database"
-VECTOR_STORE_DIR = DATA_DIR/"vector_store"
-CACHE_DIR = DATA_DIR/"cache"
-EXPORT_DIR = DATA_DIR/"export"
-
-
+from app.core.constants import DATABASE_DIR, VECTOR_STORE_DIR
 class Settings(BaseSettings): 
 
     # API
