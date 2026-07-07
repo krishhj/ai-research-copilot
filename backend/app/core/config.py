@@ -17,12 +17,7 @@ CACHE_DIR = DATA_DIR/"cache"
 EXPORT_DIR = DATA_DIR/"export"
 
 
-class Settings(BaseSettings):
-    
-    # Application
-    app_name: str = "AI Research Copilot"
-    app_version: str = "0.1.0"
-    debug: bool = True
+class Settings(BaseSettings): 
 
     # API
     api_host: str = "127.0.0.1"
