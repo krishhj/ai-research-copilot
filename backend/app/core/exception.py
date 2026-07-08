@@ -13,7 +13,7 @@ class ConfigurationError(AppError):
 
 #Database
 class DatabaseError(AppError):
-    """Raised when databse operations fails"""
+    """Raised when database operations fails"""
     pass
 
 #PDF Processing
@@ -40,7 +40,7 @@ class LLMError(AppError):
     """Raised when the large language model fails"""
     pass
 
-#Recommmendations
+#Recommendations
 class RecommendationError(AppError):
     """Raised when recommendations generations fails"""
     pass
