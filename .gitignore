@@ -1,7 +1,32 @@
-# Virtual environment
+# Virtual Environment
 .venv/
-venv/
-env/
 
-# VS Code
+# IDEs
 .vscode/
+
+# Environment Variables
+.env
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# MyPy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Logs
+logs/*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
