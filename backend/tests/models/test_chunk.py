@@ -7,13 +7,13 @@ def test_create_chunk():
         paper_id=uuid4(),
         chunk_index=0,
         page_number=1,
-        text="This is a test chunk.",
+        chunk_text="This is a test chunk.",
         token_count=120,
     )
 
     assert chunk.chunk_index == 0
     assert chunk.page_number == 1
-    assert chunk.text == "This is a test chunk."
+    assert chunk.chunk_text == "This is a test chunk."
 
 #Test 2 — UUID Generation
 from uuid import UUID
@@ -23,7 +23,7 @@ def test_chunk_has_uuid():
         paper_id=uuid4(),
         chunk_index=0,
         page_number=1,
-        text="Hello",
+        chunk_text="Hello",
         token_count=10,
     )
 
@@ -35,7 +35,7 @@ def test_default_embedding_status():
         paper_id=uuid4(),
         chunk_index=0,
         page_number=1,
-        text="Hello",
+        chunk_text="Hello",
         token_count=10,
     )
 
@@ -51,7 +51,7 @@ def test_invalid_page_number():
             paper_id=uuid4(),
             chunk_index=0,
             page_number=0,
-            text="Hello",
+            chunk_text="Hello",
             token_count=10,
         )
 
@@ -62,6 +62,6 @@ def test_invalid_chunk_index():
             paper_id=uuid4(),
             chunk_index=-1,
             page_number=1,
-            text="Hello",
+            chunk_text="Hello",
             token_count=10,
         )
