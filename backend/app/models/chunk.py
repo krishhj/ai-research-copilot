@@ -25,7 +25,7 @@ class Chunk(BaseModel):
     )
 
     # Actual text content
-    text: str
+    chunk_text: str
 
     # Number of tokens in the chunk
     token_count: int = Field(ge=0)
