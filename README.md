@@ -1,375 +1,336 @@
+<div align="center">
+
 # AI Research Copilot
 
-> A production-style AI-powered research assistant that enables semantic search, Retrieval-Augmented Generation (RAG), research analytics, and paper recommendations from scientific literature.
+### AI-powered research assistant for semantic search, Retrieval-Augmented Generation (RAG), and research analytics.
+
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Under%20Development-orange)
+
+</div>
 
 ---
 
 ## Overview
 
-AI Research Copilot is an end-to-end AI application designed to help researchers, students, and engineers efficiently interact with research papers.
+AI Research Copilot is a full-stack AI application for exploring scientific literature through semantic search and Retrieval-Augmented Generation (RAG).
 
-Users can upload papers, perform semantic search, ask questions using Retrieval-Augmented Generation (RAG), receive source-grounded answers, discover related papers, analyze research topics, and identify potential research gaps.
+The system processes research papers into searchable knowledge, retrieves the most relevant information using hybrid search techniques, and generates source-grounded responses powered by Large Language Models.
 
-Unlike many tutorial-based projects, this application focuses on implementing the complete AI pipeline with professional software engineering practices rather than relying heavily on high-level frameworks.
-
----
-
-# Objectives
-
-- Build a production-style AI backend
-- Implement Retrieval-Augmented Generation (RAG) from first principles
-- Learn modern Information Retrieval techniques
-- Practice scalable software architecture
-- Develop a modern React frontend
-- Apply software engineering best practices
-- Understand AI system design end-to-end
+The project is designed with a strong emphasis on modular architecture, maintainability, and production-oriented software engineering practices.
 
 ---
 
-# Features
+## Features
 
-## Document Processing
+### Document Processing
 
-- Upload research papers (PDF)
+- PDF ingestion
 - Metadata extraction
-- Text extraction
-- Intelligent text chunking
+- Intelligent document chunking
 - Persistent document storage
 
----
+### Retrieval
 
-## Semantic Search
+- Semantic vector search
+- BM25 lexical search
+- Hybrid retrieval
+- Cross-encoder reranking
 
-- Dense Vector Search
-- BM25 Keyword Search
-- Hybrid Retrieval
-- Cross-Encoder Reranking
-- Source-aware retrieval
+### AI Assistant
 
----
-
-## AI Assistant
-
-- Chat with research papers
-- Context-aware answers
+- Retrieval-Augmented Generation (RAG)
+- Context-aware question answering
 - Source citations
-- Conversation memory
-- Paper summarization
+- Multi-turn conversations
+
+### Research Analytics
+
+- Paper recommendations
+- Topic modeling
+- Citation network visualization
+- Research gap analysis
 
 ---
 
-## Research Analytics
+# System Architecture
 
-- Topic Modeling (BERTopic)
-- Citation Network Analysis
-- Research Gap Analysis
-- Similar Paper Recommendations
-- Research Trend Visualization
+```text
+                           React Frontend
+                                  │
+                                  ▼
+                           FastAPI Backend
+                                  │
+ ┌──────────────────────────────────────────────────┐
+ │                   API Layer                      │
+ ├──────────────────────────────────────────────────┤
+ │                 Service Layer                    │
+ ├──────────────────────────────────────────────────┤
+ │              Retrieval Pipeline                  │
+ ├──────────────────────────────────────────────────┤
+ │      SQLite Metadata + ChromaDB Vector Store     │
+ ├──────────────────────────────────────────────────┤
+ │            Large Language Model (Groq)           │
+ └──────────────────────────────────────────────────┘
+```
+
+---
+
+# Retrieval Pipeline
+
+```text
+Research Paper (PDF)
+        │
+        ▼
+Text Extraction
+        │
+        ▼
+Metadata Extraction
+        │
+        ▼
+Document Chunking
+        │
+        ▼
+Embedding Generation
+        │
+        ▼
+Vector Database
+──────────────────────────────────────────────
+        │
+User Question
+        │
+        ▼
+Query Embedding
+        │
+        ▼
+Hybrid Retrieval
+(Dense + BM25)
+        │
+        ▼
+Cross-Encoder Reranking
+        │
+        ▼
+Context Construction
+        │
+        ▼
+Large Language Model
+        │
+        ▼
+Answer with Citations
+```
 
 ---
 
-## Evaluation
-
-- Retrieval quality evaluation
-- RAG evaluation
-- Latency benchmarking
-- Embedding quality experiments
-
----
-
-# Tech Stack
-
-## Frontend
-
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Query
-- Axios
-
----
+# Technology Stack
 
 ## Backend
 
 - FastAPI
 - Uvicorn
 - Pydantic v2
-- SQLAlchemy
-- SQLite
 
----
-
-## AI / Machine Learning
+## Artificial Intelligence
 
 - Sentence Transformers
 - ChromaDB
 - Rank-BM25
-- Cross Encoder Reranker
+- Cross Encoder
 - BERTopic
 - NetworkX
-- PyVis
 
----
-
-## Large Language Model
+## Large Language Models
 
 - Groq API
-- Llama 3.x
+- Llama 3
 
----
+## Database
+
+- SQLite
+- ChromaDB
+
+## Frontend
+
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
 
 ## Development
 
-- Git
 - Pytest
 - Ruff
 - Black
 - isort
 - mypy
+- Git
 
 ---
 
-# Project Architecture
+# Project Structure
 
-```
-React Frontend
-        │
-        ▼
-FastAPI Backend
-        │
-──────────────────────────────────────
-│              API Layer             │
-──────────────────────────────────────
-│           Service Layer            │
-──────────────────────────────────────
-│           Storage Layer            │
-──────────────────────────────────────
-│        SQLite + ChromaDB           │
-──────────────────────────────────────
-│              Groq LLM              │
-```
-
----
-
-# Backend Structure
-
-```
+```text
 backend/
 │
 ├── app/
+│   ├── api/
 │   ├── core/
 │   ├── models/
-│   ├── api/
 │   ├── services/
 │   ├── storage/
 │   ├── prompts/
 │   └── utils/
 │
-├── tests/
 ├── docs/
+├── tests/
 ├── logs/
-└── data/
+├── pyproject.toml
+└── requirements.txt
+
+frontend/
+│
+├── src/
+├── public/
+└── package.json
 ```
 
 ---
 
-# RAG Pipeline
+# Software Architecture
 
-```
-PDF Upload
-      │
-      ▼
-PDF Processing
-      │
-      ▼
-Metadata Extraction
-      │
-      ▼
-Text Chunking
-      │
-      ▼
-Embedding Generation
-      │
-      ▼
-ChromaDB
+The project follows a layered architecture with clearly separated responsibilities.
 
-────────────────────────────
-
-User Query
-      │
-      ▼
-Query Embedding
-      │
-      ▼
-Dense Search
-
-+
-
-BM25 Search
-      │
-      ▼
-Hybrid Retrieval
-      │
-      ▼
-Cross Encoder Reranker
-      │
-      ▼
-Context Builder
-      │
-      ▼
-Prompt Builder
-      │
-      ▼
-Groq LLM
-      │
-      ▼
-Answer + Citations
-```
-
----
-
-# Engineering Principles
-
-This project follows several software engineering principles:
-
-- Single Responsibility Principle (SRP)
+- Domain-Driven Design (DDD)
 - Separation of Concerns
-- Composition over Inheritance
-- Don't Repeat Yourself (DRY)
+- Single Responsibility Principle
+- Modular Service Architecture
+- Type-Safe Data Models
+- Dependency Injection
+- Structured Logging
 - Centralized Configuration
-- Explicit Error Handling
-- Type Safety
-- Test-Driven Development (TDD mindset)
-- Layered Architecture
-- Modular Design
+- Unit Testing
+- Clean API Design
 
 ---
 
 # Technical Decisions
 
-### Why FastAPI?
+### FastAPI
 
-- Excellent performance
-- Native Pydantic support
-- Automatic API documentation
-- Strong typing
+FastAPI provides high performance, automatic OpenAPI documentation, native Pydantic integration, and excellent support for asynchronous APIs.
 
----
+### SQLite
 
-### Why React?
+SQLite is used for structured metadata storage due to its simplicity, portability, and minimal operational overhead.
 
-- Modern production frontend
-- Better user experience
-- Clean frontend/backend separation
+### ChromaDB
 
----
+ChromaDB provides persistent vector storage for semantic retrieval while remaining lightweight and easy to integrate.
 
-### Why SQLite?
+### Custom Retrieval Pipeline
 
-- Lightweight
-- Serverless
-- Perfect for project-scale metadata storage
+Instead of relying on high-level orchestration frameworks, the retrieval pipeline is implemented from first principles to provide greater transparency, flexibility, and control over each stage of the system.
 
 ---
 
-### Why ChromaDB?
+# Research Foundations
 
-- Simple persistent vector database
-- Easy integration
-- Great developer experience
+The implementation draws inspiration from established work in information retrieval and natural language processing, including:
 
----
-
-### Why Build RAG Without LangChain?
-
-The objective is to understand how modern RAG systems actually work.
-
-Instead of hiding complexity behind frameworks, this project implements:
-
-- Chunking
-- Embeddings
-- Retrieval
-- Prompt construction
-- Context building
-- Conversation memory
-
-from first principles.
+- Retrieval-Augmented Generation (Lewis et al.)
+- Attention Is All You Need
+- Sentence-BERT
+- Dense Passage Retrieval
+- BM25 Ranking
+- Cross-Encoder Reranking
+- BERTopic
+- RAGAS
 
 ---
 
-### Why Not LlamaIndex?
+# Development
 
-LlamaIndex abstracts document indexing and retrieval.
+## Clone the repository
 
-Since one goal of this project is to understand and implement these components ourselves, a custom implementation is preferred.
+```bash
+git clone https://github.com/<your-username>/ai-research-copilot.git
+```
 
----
+## Create a virtual environment
 
-# Current Progress
+```bash
+python -m venv .venv
+```
 
-## Sprint 1 — Core Infrastructure
+## Activate the environment
 
-- [x] Project Architecture
-- [x] Configuration System
-- [x] Logging
-- [x] Constants
-- [x] Custom Exceptions
+### Windows
 
----
+```bash
+.venv\Scripts\activate
+```
 
-## Sprint 2 — Domain Models
+### Linux / macOS
 
-- [x] PaperStatus Enum
-- [x] Paper Model
-- [x] Paper Unit Tests
-- [ ] Chunk Model
-- [ ] Query Model
-- [ ] Answer Model
-- [ ] Conversation Model
+```bash
+source .venv/bin/activate
+```
 
----
+## Install dependencies
 
-## Upcoming
+```bash
+pip install -r requirements.txt
+```
 
-- FastAPI
-- SQLite
-- PDF Processing
-- Chunking
-- Embeddings
-- ChromaDB
-- Hybrid Retrieval
-- Reranking
-- RAG
-- Analytics
-- React Frontend
-- Docker
-- Deployment
+## Configure environment variables
 
----
+```bash
+cp .env.example .env
+```
 
-# Learning Outcomes
+Update the required API keys inside `.env`.
 
-This project is designed to strengthen skills in:
+## Run the application
 
-- AI Engineering
-- Retrieval-Augmented Generation
-- Information Retrieval
-- Software Architecture
-- FastAPI
-- React
-- Vector Databases
-- Prompt Engineering
-- Testing
-- MLOps Fundamentals
+```bash
+uvicorn app.main:app --reload
+```
 
 ---
 
-# Project Status
+# Testing
 
-🚧 **Actively Under Development**
+Run the test suite
 
-The project is being built incrementally with a focus on clean architecture, maintainability, and production-ready engineering practices.
+```bash
+pytest
+```
+
+Format the code
+
+```bash
+black .
+```
+
+Sort imports
+
+```bash
+isort .
+```
+
+Run static analysis
+
+```bash
+ruff check .
+```
+
+Run type checking
+
+```bash
+mypy app
+```
 
 ---
 
