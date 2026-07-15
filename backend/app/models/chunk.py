@@ -1,4 +1,5 @@
 from uuid import UUID, uuid4
+
 from pydantic import BaseModel, Field
 
 
@@ -12,17 +13,11 @@ class Chunk(BaseModel):
     paper_id: UUID
 
     # Position of the chunk within the paper (0-based)
-    chunk_index: int = Field(
-    ge=0,
-    description="Zero-based index of the chunk within the paper."
-    )
+    chunk_index: int = Field(ge=0, description="Zero-based index of the chunk within the paper.")
 
     # PDF page number (1-based)
-    
-    page_number: int = Field(
-    ge=1,
-    description="One-based page number in the original PDF."
-    )
+
+    page_number: int = Field(ge=1, description="One-based page number in the original PDF.")
 
     # Actual text content
     chunk_text: str

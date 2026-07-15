@@ -1,6 +1,8 @@
-#Test 1 — Create a Chunk
+# Test 1 — Create a Chunk
 from uuid import uuid4
+
 from app.models.chunk import Chunk
+
 
 def test_create_chunk():
     chunk = Chunk(
@@ -15,8 +17,10 @@ def test_create_chunk():
     assert chunk.page_number == 1
     assert chunk.chunk_text == "This is a test chunk."
 
-#Test 2 — UUID Generation
+
+# Test 2 — UUID Generation
 from uuid import UUID
+
 
 def test_chunk_has_uuid():
     chunk = Chunk(
@@ -29,7 +33,8 @@ def test_chunk_has_uuid():
 
     assert isinstance(chunk.id, UUID)
 
-#Test 3 — Default Embedding Status
+
+# Test 3 — Default Embedding Status
 def test_default_embedding_status():
     chunk = Chunk(
         paper_id=uuid4(),
@@ -41,9 +46,11 @@ def test_default_embedding_status():
 
     assert chunk.embedding_created is False
 
-#Test 4 — Invalid Page Number
+
+# Test 4 — Invalid Page Number
 import pytest
 from pydantic import ValidationError
+
 
 def test_invalid_page_number():
     with pytest.raises(ValidationError):
@@ -55,7 +62,8 @@ def test_invalid_page_number():
             token_count=10,
         )
 
-#Test 5 — Invalid Chunk Index
+
+# Test 5 — Invalid Chunk Index
 def test_invalid_chunk_index():
     with pytest.raises(ValidationError):
         Chunk(

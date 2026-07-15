@@ -4,11 +4,11 @@ Application-wide Constants
 
 from pathlib import Path
 
-#Project information
+# Project information
 APP_NAME = "AI Research Copilot"
 APP_VERSION = "0.1.0"
 
-#Project Directories
+# Project Directories
 # backend/
 BASE_DIR = Path(__file__).resolve().parents[2]
 
