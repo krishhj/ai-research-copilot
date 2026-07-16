@@ -5,7 +5,6 @@ This module configures the application's logging system.
 """
 
 import logging
-from pathlib import Path
 
 from app.core.constants import LOG_DIR
 
