@@ -12,10 +12,10 @@ class PaperMetaData(BaseModel):
 
     title: str
     authors: list[str] = Field(default_factory=list)
-    abstract: Optional[str] = None
-    year: Optional[int] = None
-    doi: Optional[str] = None
-    journal: Optional[str] = None
+    abstract: str | None
+    year: int | None
+    doi: str | None
+    journal: str | None
     keywords: list[str] = Field(default_factory=list)
 
 
