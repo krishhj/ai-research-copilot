@@ -1,9 +1,12 @@
-# Test 1 — Create a Chunk
-from uuid import uuid4
+from uuid import UUID, uuid4
+
+import pytest
+from pydantic import ValidationError
 
 from app.models.chunk import Chunk
 
 
+# Test 1 — Create a Chunk
 def test_create_chunk():
     chunk = Chunk(
         paper_id=uuid4(),
@@ -19,9 +22,6 @@ def test_create_chunk():
 
 
 # Test 2 — UUID Generation
-from uuid import UUID
-
-
 def test_chunk_has_uuid():
     chunk = Chunk(
         paper_id=uuid4(),
@@ -48,10 +48,6 @@ def test_default_embedding_status():
 
 
 # Test 4 — Invalid Page Number
-import pytest
-from pydantic import ValidationError
-
-
 def test_invalid_page_number():
     with pytest.raises(ValidationError):
         Chunk(

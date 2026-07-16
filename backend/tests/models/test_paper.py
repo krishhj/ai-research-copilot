@@ -1,6 +1,8 @@
-"""
-Test 1 - Paper Creation
-"""
+from datetime import datetime
+from uuid import UUID
+
+import pytest
+from pydantic import ValidationError
 
 from app.models.enums import PaperStatus
 from app.models.paper import (
@@ -10,6 +12,7 @@ from app.models.paper import (
 )
 
 
+# Test 1 - Paper Creation
 def test_create_paper():
     metadata = PaperMetaData(
         title="Attention Is All You Need",
@@ -24,12 +27,7 @@ def test_create_paper():
     assert paper.processing.status == PaperStatus.UPLOADED
 
 
-"""
-Test 2 - UUID Generation
-"""
-from uuid import UUID
-
-
+# Test 2 - UUID Generation
 def test_paper_has_uuid():
     metadata = PaperMetaData(title="Paper")
     processing = ProcessingMetadata(filename="paper.pdf")
@@ -41,25 +39,14 @@ def test_paper_has_uuid():
     assert isinstance(paper.id, UUID)
 
 
-"""
-Test 3 - Timestamp
-"""
-from datetime import datetime
-
-
+# Test 3 - Timestamp
 def test_upload_time_created():
     processing = ProcessingMetadata(filename="paper.pdf")
 
     assert isinstance(processing.uploaded_at, datetime)
 
 
-"""
-Test 4 - Invalid Year
-"""
-import pytest
-from pydantic import ValidationError
-
-
+# Test 4 - Invalid Year
 def test_inavlid_year():
     with pytest.raises(ValidationError):
         PaperMetaData(
@@ -68,11 +55,7 @@ def test_inavlid_year():
         )
 
 
-"""
-Test 5 - Default status
-"""
-
-
+# Test 5 - Default status
 def test_default_status():
     processing = ProcessingMetadata(filename="paper.pdf")
     assert processing.status == PaperStatus.UPLOADED
