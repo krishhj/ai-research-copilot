@@ -5,11 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.models.enums import PaperStatus
-from app.models.paper import (
-    Paper,
-    PaperMetaData,
-    ProcessingMetadata,
-)
+from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
 
 
 # Test 1 - Paper Creation

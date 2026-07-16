@@ -9,7 +9,10 @@ from app.models.answer import Answer, Citation, RetrievedChunk
 # Test 1
 def test_create_answer():
     citation = Citation(
-        paper_id=uuid4(), paper_title="Attention is All You Need", chunk_id=uuid4(), page_number=4
+        paper_id=uuid4(),
+        paper_title="Attention is All You Need",
+        chunk_id=uuid4(),
+        page_number=4,
     )
 
     retrieved_chunk = RetrievedChunk(chunk_id=uuid4(), score=0.92)
