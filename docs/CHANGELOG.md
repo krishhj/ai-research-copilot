@@ -60,12 +60,6 @@ Initial backend scaffold: configuration, logging, error handling, and the first 
 ### Removed
 - Unused constants from `app/core/constants.py`
 
-### Fixed
-- Spelling mistakes in docstrings/comments
-- Incorrectly named file
-
----
-
 ## Notes on Versioning
 
 This repo hasn't had formal GitHub releases/tags cut yet — the version numbers above are **development milestones** pulled from your own commit history (`Add README for v0.1.0`, and the domain-layer-complete checkpoint), not actual git tags. To make the links below work and keep this file self-maintaining going forward, tag matching releases when you're ready:
