@@ -25,7 +25,8 @@ __pycache__/
 htmlcov/
 
 # Logs
-logs/*.log
+logs/
+*.log
 
 # OS Files
 .DS_Store
