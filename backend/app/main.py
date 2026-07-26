@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.router import api_router
 from app.core.constants import APP_NAME, APP_VERSION
 from app.core.logger import logging
 
@@ -27,9 +28,14 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    app.include_router(api_router)
+
     return app
 
+
 app = create_app()
+
+
 @app.get("/")
 def root():
     return {"message": "AI Research Copilot API is running"}
