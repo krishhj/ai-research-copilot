@@ -18,6 +18,24 @@ async def lifespan(app: FastAPI):
 
     logging.info("Shutting down AI Research Copilot")
 
+tags_metadata = [
+    {
+        "name": "Health",
+        "description": "Health check and system status endpoints.",
+    },
+    {
+        "name": "Papers",
+        "description": "Upload and manage research papers.",
+    },
+    {
+        "name": "Chat",
+        "description": "Interact with the AI Research Copilot.",
+    },
+    {
+        "name": "Analytics",
+        "description": "Retrieve application analytics and statistics.",
+    },
+]
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
@@ -41,6 +59,7 @@ This API provides endpoints for:
     )
     register_exception_handlers(app)
     app.include_router(api_router)
+    openapi_tags=tags_metadata,
 
     return app
 
