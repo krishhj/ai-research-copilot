@@ -25,8 +25,19 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=APP_NAME,
         version=APP_VERSION,
-        description="AI Research Copilot Backend API",
+        description="""
+AI Research Copilot Backend API.
+
+This API provides endpoints for:
+
+- Uploading research papers
+- Semantic search
+- AI-powered chat
+- Analytics
+""",
         lifespan=lifespan,
+        docs_url="/docs",
+        redoc_url="/redoc",
     )
     register_exception_handlers(app)
     app.include_router(api_router)
