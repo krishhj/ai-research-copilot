@@ -2,9 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.core.exception_handlers import register_exception_handlers
 from app.api.router import api_router
-from app.core.constants import APP_NAME, APP_VERSION
+from app.core.constants import APP_NAME, APP_VERSION, PAPERS_DIR
+from app.core.exception_handlers import register_exception_handlers
 from app.core.logger import logging
 
 
@@ -13,10 +13,14 @@ async def lifespan(app: FastAPI):
     """Application startup and shutdown"""
 
     logging.info("Starting AI Research Copilot")
-    # Future Initializations here
+
+    PAPERS_DIR.mkdir(parents=True, exist_ok=True)
+    logging.info("Paper storage directory is ready: %s", PAPERS_DIR)
+
     yield
 
     logging.info("Shutting down AI Research Copilot")
+
 
 tags_metadata = [
     {
@@ -36,6 +40,7 @@ tags_metadata = [
         "description": "Retrieve application analytics and statistics.",
     },
 ]
+
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
@@ -59,7 +64,7 @@ This API provides endpoints for:
     )
     register_exception_handlers(app)
     app.include_router(api_router)
-    openapi_tags=tags_metadata,
+    openapi_tags = (tags_metadata,)
 
     return app
 
