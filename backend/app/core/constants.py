@@ -30,6 +30,9 @@ CACHE_DIR = DATA_DIR / "cache"
 # backend/data/exports/
 EXPORT_DIR = DATA_DIR / "exports"
 
+# backend/data/papers/
+PAPERS_DIR = DATA_DIR / "papers"
+
 # Application Constants
 
 DEFAULT_ENCODING = "utf-8"
