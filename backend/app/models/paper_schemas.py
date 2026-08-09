@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from app.models.paper import Paper
 
 class PaperUploadResponse(BaseModel):
-    """Response returned after uplaoding a paper"""
+    """Response returned after uploading a paper"""
     message: str
     paper: Paper
 
