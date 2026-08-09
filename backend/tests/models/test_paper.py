@@ -15,18 +15,18 @@ def test_create_paper():
         authors=["Ashish Vaswani"],
         year=2017,
     )
-    processing = ProcessingMetadata(filename="attention.pdf")
+    processing = ProcessingMetadata(stored_filename="attention.pdf")
     paper = Paper(metadata=metadata, processing=processing)
 
     assert paper.metadata.title == "Attention Is All You Need"
-    assert paper.processing.filename == "attention.pdf"
+    assert paper.processing.stored_filename == "attention.pdf"
     assert paper.processing.status == PaperStatus.UPLOADED
 
 
 # Test 2 - UUID Generation
 def test_paper_has_uuid():
     metadata = PaperMetaData(title="Paper")
-    processing = ProcessingMetadata(filename="paper.pdf")
+    processing = ProcessingMetadata(stored_filename="paper.pdf")
     paper = Paper(
         metadata=metadata,
         processing=processing,
@@ -37,7 +37,7 @@ def test_paper_has_uuid():
 
 # Test 3 - Timestamp
 def test_upload_time_created():
-    processing = ProcessingMetadata(filename="paper.pdf")
+    processing = ProcessingMetadata(stored_filename="paper.pdf")
 
     assert isinstance(processing.uploaded_at, datetime)
 
@@ -53,5 +53,5 @@ def test_inavlid_year():
 
 # Test 5 - Default status
 def test_default_status():
-    processing = ProcessingMetadata(filename="paper.pdf")
+    processing = ProcessingMetadata(stored_filename="paper.pdf")
     assert processing.status == PaperStatus.UPLOADED
