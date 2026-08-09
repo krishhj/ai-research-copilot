@@ -26,7 +26,11 @@ htmlcov/
 
 # Logs
 logs/
+backend/logs/
 *.log
+
+# Runtime data (uploads, DBs, caches, exports)
+backend/data/
 
 # OS Files
 .DS_Store
