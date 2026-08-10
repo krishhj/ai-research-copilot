@@ -5,6 +5,7 @@ from app.api.dependencies import get_paper_service
 from app.main import create_app
 from app.services.paper_service import PaperService
 from app.storage.file_storage import FileStorage
+from app.storage.sqlite import SQLitePaperRepository
 
 @pytest.fixture
 def client(tmp_path):
@@ -13,7 +14,13 @@ def client(tmp_path):
 
     def get_test_paper_service() -> PaperService:
         storage  = FileStorage(base_directory=tmp_path)
-        return PaperService(file_storage=storage)
+        repository = SQLitePaperRepository(
+            database_path=tmp_path / "papers.db",
+        )
+        return PaperService(
+            file_storage=storage,
+            paper_repository=repository,
+        )
 
     app.dependency_overrides[get_paper_service] = get_test_paper_service
 

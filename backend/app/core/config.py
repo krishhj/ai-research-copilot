@@ -9,7 +9,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.core.constants import DATABASE_DIR, VECTOR_STORE_DIR
+from app.core.constants import DATABASE_DIR, VECTOR_STORE_DIR, PAPERS_DATABASE_PATH
 
 
 class Settings(BaseSettings):
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
 
     # Database
-    database_path: Path = DATABASE_DIR / "papers.db"
+    database_path: Path = PAPERS_DATABASE_PATH
     vector_store_path: Path = VECTOR_STORE_DIR
 
     # embeddings

@@ -33,8 +33,9 @@ EXPORT_DIR = DATA_DIR / "exports"
 # backend/data/papers/
 PAPERS_DIR = DATA_DIR / "papers"
 
+#backend/data/database/paper.db
+PAPERS_DATABASE_PATH = DATABASE_DIR / "papers.db"
 # Application Constants
-
 DEFAULT_ENCODING = "utf-8"
 SUPPORTED_PDF_EXTENSIONS = {".pdf"}
 MAX_UPLOAD_SIZE_MB = 100

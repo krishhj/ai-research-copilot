@@ -2,10 +2,17 @@ import pytest
 
 from app.services.paper_service import PaperService
 from app.storage.file_storage import FileStorage
+from app.storage.sqlite import SQLitePaperRepository
 
 def test_upload_paper_saves_pdf_and_returns_paper(tmp_path):
     storage = FileStorage(base_directory=tmp_path)
-    service = PaperService(file_storage=storage)
+    repository = SQLitePaperRepository(
+        database_path=tmp_path / "papers.db",
+    )
+    service = PaperService(
+        file_storage=storage,
+        paper_repository=repository,
+    )
 
     paper = service.upload_paper(
         content=b"sample PDF content",
@@ -20,7 +27,13 @@ def test_upload_paper_saves_pdf_and_returns_paper(tmp_path):
 
 def test_upload_paper_rejects_non_pdf_file(tmp_path):
     storage = FileStorage(base_directory=tmp_path)
-    service = PaperService(file_storage=storage)
+    repository = SQLitePaperRepository(
+        database_path=tmp_path / "papers.db",
+    )
+    service = PaperService(
+        file_storage=storage,
+        paper_repository=repository,
+    )
 
     with pytest.raises(ValueError, match="Only PDF files are Supported."):
         service.upload_paper(
