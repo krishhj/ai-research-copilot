@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from app.api.dependencies import get_paper_service
-from app.models.paper_schemas import PaperUploadResponse
+from app.models.paper_schemas import PaperListResponse, PaperUploadResponse
 from app.services.paper_service import PaperService
 
 router = APIRouter(prefix="/papers", tags=["Paper"])
@@ -29,3 +29,12 @@ async def upload_paper(
         ) from error
 
     return PaperUploadResponse(message= "Paper uploaded successfully", paper=paper)
+
+@router.get(
+    "",
+    response_model= PaperListResponse,
+)
+def list_papers(
+    paper_service: PaperService = Depends(get_paper_service),
+) -> PaperListResponse:
+    return PaperListResponse(papers=paper_service.list_papers())
