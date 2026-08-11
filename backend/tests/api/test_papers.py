@@ -61,3 +61,23 @@ def test_upload_non_pdf_returns_bad_request(client):
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Only PDF files are Supported."
+
+def test_list_papers_returns_uploaded_paper(client):
+    client.post(
+        "/api/v1/papers",
+        files={
+            "file": (
+                "attention.pdf",
+                b"sample PDF content",
+                "application/pdf"
+            ),
+        },
+    )
+
+    response = client.get("/api/v1/papers")
+
+    assert response.status_code == 200
+
+    papers = response.json()["papers"]
+    assert len(papers) == 1
+    assert papers[0]["processing"]["stored_filename"].endswith(".pdf")
