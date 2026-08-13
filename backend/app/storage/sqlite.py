@@ -2,6 +2,7 @@ import json
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from uuid import UUID
 
 from app.models.enums import PaperStatus
 from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
@@ -99,3 +100,17 @@ class SQLitePaperRepository:
                 status=PaperStatus(row["status"])
             )
         )
+
+    def get_by_id(self, paper_id: UUID) -> Paper | None:
+        """Return one paper by ID, or None when it does not exist"""
+        with sqlite3.connect(self._database_path) as connection :
+            connection.row_factory = sqlite3.Row
+
+            row = connection.execute(
+                "SELECT * FROM papers WHERE id = ?",(str(paper_id),)
+            ).fetchone()
+
+        if row is None:
+            return None
+
+        return self._row_to_paper(row)
