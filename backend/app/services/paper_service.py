@@ -1,5 +1,5 @@
 from pathlib import Path
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
 from app.storage.file_storage import FileStorage
@@ -37,3 +37,7 @@ class PaperService():
     def list_papers(self) -> list[Paper]:
         """Return all uploaded papers."""
         return self._paper_repository.list_all()
+
+    def get_paper(self, paper_id: UUID) -> Paper | None:
+        """Return one uploaded paper by ID"""
+        return self._paper_repository.get_by_id(paper_id)
