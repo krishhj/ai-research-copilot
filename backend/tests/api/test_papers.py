@@ -81,3 +81,30 @@ def test_list_papers_returns_uploaded_paper(client):
     papers = response.json()["papers"]
     assert len(papers) == 1
     assert papers[0]["processing"]["stored_filename"].endswith(".pdf")
+
+def test_get_paper_returns_uploaded_paper(client):
+    upload_response = client.post(
+        "/api/v1/papers",
+        files={
+            "file": (
+                "attention.pdf",
+                b"sample PDF content",
+                "application/pdf",
+            ),
+        },
+    )
+    paper_id = upload_response.json()["paper"]["id"]
+
+    response = client.get(f"/api/v1/papers/{paper_id}")
+
+    assert response.status_code == 200
+    assert response.json()["paper"]["id"] == paper_id
+
+
+def test_get_missing_paper_returns_not_found(client):
+    response = client.get(
+        "/api/v1/papers/00000000-0000-0000-0000-000000000000",
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Paper not found."
