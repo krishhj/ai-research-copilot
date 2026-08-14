@@ -14,3 +14,8 @@ class FileStorage:
             file.write(content)
 
         return file_path
+
+    def delete(self, stored_filename: str) -> None:
+        """Delete one stored file."""
+        file_path = self._base_directory / stored_filename
+        file_path.unlink()
