@@ -108,3 +108,36 @@ def test_get_missing_paper_returns_not_found(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Paper not found."
+
+def test_delete_paper_removes_metadata_and_file(client):
+    upload_response = client.post(
+        "/api/v1/papers",
+        files={
+            "file": (
+                "attention.pdf",
+                b"sample PDF content",
+                "application/pdf",
+            ),
+        },
+    )
+    paper_id = upload_response.json()["paper"]["id"]
+
+    delete_response = client.delete(f"/api/v1/papers/{paper_id}")
+
+    assert delete_response.status_code == 200
+    assert delete_response.json()["message"] == "Paper deleted successfully"
+
+    get_response = client.get(f"/api/v1/papers/{paper_id}")
+    assert get_response.status_code == 404
+
+    list_response = client.get("/api/v1/papers")
+    assert list_response.json()["papers"] == []
+
+
+def test_delete_missing_paper_returns_not_found(client):
+    response = client.delete(
+        "/api/v1/papers/00000000-0000-0000-0000-000000000000",
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Paper not found."
