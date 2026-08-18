@@ -41,3 +41,15 @@ class PaperService():
     def get_paper(self, paper_id: UUID) -> Paper | None:
         """Return one uploaded paper by ID"""
         return self._paper_repository.get_by_id(paper_id)
+
+    def delete_paper(self, paper_id: UUID) -> bool:
+        """Delete a paper and its stored PDF"""
+        paper = self.get_paper(paper_id=paper_id)\
+        
+        if paper is None:
+            return False
+
+        self._file_storage.delete(paper.processing.stored_filename)
+        self._paper_repository.delete(paper_id=paper_id)
+        
+        return True
