@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from uuid import UUID
 
 from app.api.dependencies import get_paper_service
-from app.models.paper_schemas import PaperListResponse, PaperUploadResponse, PaperResponse
+from app.models.paper_schemas import PaperListResponse, PaperUploadResponse,PaperDeleteResponse, PaperResponse
 from app.services.paper_service import PaperService
 
 router = APIRouter(prefix="/papers", tags=["Paper"])
@@ -58,3 +58,19 @@ def get_paper(
         )
 
     return PaperResponse(paper=paper)
+
+@router.delete(
+    "/{paper_id}",
+    response_model=PaperDeleteResponse
+)
+def delete_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper_service)) -> PaperDeleteResponse:
+    """Delete one uploaded paper"""
+    deleted = paper_service.delete_paper(paper_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Paper not found."
+        )
+
+    return PaperDeleteResponse(message="Paper deleted successfully")
