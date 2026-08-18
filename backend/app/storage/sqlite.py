@@ -114,3 +114,13 @@ class SQLitePaperRepository:
             return None
 
         return self._row_to_paper(row)
+
+    def delete(self, paper_id: UUID) -> bool:
+        """Delete one paper record and report wether it existed"""
+        with sqlite3.connect(self._database_path) as connection:
+            cursor = connection.execute(
+                "DELETE FROM papers WHERE id = ?",
+                (str(paper_id),),
+            )
+
+        return cursor.rowcount == 1
