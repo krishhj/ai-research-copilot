@@ -11,3 +11,7 @@ class PaperListResponse(BaseModel):
 
 class PaperResponse(BaseModel):
     paper: Paper
+
+class PaperDeleteResponse(BaseModel):
+    """Response returned after deleting a paper"""
+    message : str
