@@ -5,16 +5,18 @@ from app.core.exceptions import PDFProcessingError
 from app.models.enums import PaperStatus
 from app.services.document_processor import DocumentProcessor
 from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
+from app.storage.chroma import ChromaVectorStore
 from app.storage.file_storage import FileStorage
 from app.storage.sqlite import SQLitePaperRepository
 
 class PaperService():
     """Service responsible for Paper related operations"""
 
-    def __init__(self, file_storage: FileStorage, paper_repository: SQLitePaperRepository, document_processor: DocumentProcessor) -> None:
+    def __init__(self, file_storage: FileStorage, paper_repository: SQLitePaperRepository, document_processor: DocumentProcessor, vector_store: ChromaVectorStore) -> None:
         self._file_storage = file_storage
         self._paper_repository = paper_repository
         self._document_processor = document_processor
+        self._vector_store = vector_store
 
     def upload_paper(self, content: bytes, original_filename: str) -> Paper:
         """Store an uploaded PDF and create its paper domain objects"""
@@ -52,7 +54,8 @@ class PaperService():
         
         if paper is None:
             return False
-
+        
+        self._vector_store.delete_by_paper_id(paper_id=paper_id)
         self._file_storage.delete(paper.processing.stored_filename)
         self._paper_repository.delete(paper_id=paper_id)
         
