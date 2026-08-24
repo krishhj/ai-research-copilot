@@ -1,9 +1,15 @@
 import pytest
+import pymupdf
 from fastapi.testclient import TestClient
 
 from app.api.dependencies import get_paper_service
 from app.main import create_app
+from app.services.document_processor import DocumentProcessor
 from app.services.paper_service import PaperService
+from app.services.pdf_parser import PDFParser
+from app.services.text_cleaner import TextCleaner
+from app.services.text_chunker import TextChunker
+from app.storage.chroma import ChromaVectorStore
 from app.storage.file_storage import FileStorage
 from app.storage.sqlite import SQLitePaperRepository
 
@@ -17,9 +23,18 @@ def client(tmp_path):
         repository = SQLitePaperRepository(
             database_path=tmp_path / "papers.db",
         )
+        vector_store = ChromaVectorStore(
+            persist_directory=tmp_path / "chroma",
+        )
         return PaperService(
             file_storage=storage,
             paper_repository=repository,
+            document_processor=DocumentProcessor(
+                pdf_parser=PDFParser(),
+                text_cleaner=TextCleaner(),
+                text_chunker=TextChunker(),
+            ),
+            vector_store=vector_store,
         )
 
     app.dependency_overrides[get_paper_service] = get_test_paper_service
@@ -141,3 +156,33 @@ def test_delete_missing_paper_returns_not_found(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Paper not found."
+
+def test_process_paper_creates_chunks(client, tmp_path):
+    pdf_path = tmp_path / "attention.pdf"
+
+    document = pymupdf.open()
+    page = document.new_page()
+    page.insert_text((72,72), "Transformers use self-attention for sequence modelling.")
+    document.save(pdf_path)
+    document.close()
+
+    upload_response = client.post(
+        "/api/v1/papers",
+        files={
+            "file": (
+                "attention.pdf",
+                pdf_path.read_bytes(),
+                "application/pdf"
+                ),
+            }
+        )
+    paper_id = upload_response.json()["paper"]["id"]
+
+    response = client.post(f"/api/v1/papers/{paper_id}/process")
+
+    assert response.status_code == 200
+
+    paper = response.json()["paper"]
+    assert paper["processing"]["status"] == "processed"
+    assert paper["processing"]["total_pages"] == 1
+    assert paper["processing"]["total_chunks"] > 0
