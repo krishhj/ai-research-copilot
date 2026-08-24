@@ -231,3 +231,16 @@ class SQLitePaperRepository:
 
         if cursor.rowcount != 1:
             raise DatabaseError(f"Paper not found: {paper_id}")
+
+    def mark_chunks_embedded(self, paper_id: UUID) -> int:
+        """Mark all chunks for one paper as embedded"""
+        with self._connect() as connection:
+            cursor = connection.execute(
+                """
+                UPDATE chunks
+                SET embedding_created = 1
+                WHERE paper_id = ?
+                """, (str(paper_id),),
+            )
+
+        return cursor.rowcount
