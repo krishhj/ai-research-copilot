@@ -15,3 +15,10 @@ class PaperResponse(BaseModel):
 class PaperDeleteResponse(BaseModel):
     """Response returned after deleting a paper"""
     message : str
+
+class PaperIndexResponse(BaseModel):
+    """Response returned after indexing a paper"""
+
+    message: str
+    indexed_chunks: int
+    
