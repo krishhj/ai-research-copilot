@@ -32,7 +32,7 @@ class Settings(BaseSettings):
 
     # LLM
     groq_api_key: str
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-20b"
     temperature: float = 0.2
     max_tokens: int = 1024
 
