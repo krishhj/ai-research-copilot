@@ -1,8 +1,9 @@
 from uuid import uuid4
 
+from app.models.paper import PaperMetaData
 from app.services.document_processor import DocumentProcessor
 from app.services.pdf_parser import ExtractedPage, ParsedDocument
-from app.services.text_cleaner import TextCleaner 
+from app.services.text_cleaner import TextCleaner
 from app.services.text_chunker import TextChunker
 
 class FakePDFParser:
@@ -22,11 +23,20 @@ class FakePDFParser:
             )
         )
 
+
+class FakeMetadataExtractor:
+    """Minimal fake that returns a fixed PaperMetaData without touching the filesystem."""
+
+    def extract(self, pdf_path):
+        return PaperMetaData(title="A Practical Guide to RAG")
+
+
 def test_process_returns_clean_page_aware_chunks(tmp_path):
     processor = DocumentProcessor(
         pdf_parser=FakePDFParser(),
-        text_cleaner= TextCleaner(),
-        text_chunker= TextChunker(max_words=10, overlap_words=0)
+        text_cleaner=TextCleaner(),
+        text_chunker=TextChunker(max_words=10, overlap_words=0),
+        metadata_extractor=FakeMetadataExtractor(),
     )
 
     result = processor.process(
@@ -39,12 +49,14 @@ def test_process_returns_clean_page_aware_chunks(tmp_path):
     assert result.chunks[0].page_number == 1
     assert result.chunks[0].chunk_text == "efficient attention improves models."
     assert result.chunks[1].page_number == 2
+    assert result.metadata.title == "A Practical Guide to RAG"
 
 def test_process_handles_empty_page(tmp_path):
     processor = DocumentProcessor(
         pdf_parser=FakePDFParser(),
-        text_cleaner= TextCleaner(),
-        text_chunker= TextChunker(max_words=10, overlap_words=0)
+        text_cleaner=TextCleaner(),
+        text_chunker=TextChunker(max_words=10, overlap_words=0),
+        metadata_extractor=FakeMetadataExtractor(),
     )
 
     result = processor.process(
