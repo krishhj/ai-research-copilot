@@ -3,6 +3,8 @@ from pathlib import Path
 from uuid import UUID
 
 from app.models.chunk import Chunk
+from app.models.paper import PaperMetaData
+from app.services.metadata_extractor import MetadataExtractor
 from app.services.pdf_parser import ExtractedPage, PDFParser
 from app.services.text_cleaner import TextCleaner
 from app.services.text_chunker import TextChunker
@@ -13,14 +15,15 @@ class ProcessedDocument:
 
     total_pages: int
     chunks: tuple[Chunk, ...]
-
+    metadata: PaperMetaData
 class DocumentProcessor:
     """Extract, clean and chunk a PDF document"""
 
-    def __init__(self, pdf_parser: PDFParser, text_cleaner: TextCleaner, text_chunker: TextChunker) -> None:
+    def __init__(self, pdf_parser: PDFParser, text_cleaner: TextCleaner, text_chunker: TextChunker, metadata_extractor: MetadataExtractor) -> None:
         self._pdf_parser = pdf_parser
         self._text_cleaner = text_cleaner
         self._text_chunker = text_chunker
+        self._metadata_extractor = metadata_extractor
 
     def process(self, pdf_path: Path, paper_id: UUID) -> ProcessedDocument:
         """Process a PDF into clean, page-aware text chunks"""
@@ -35,5 +38,6 @@ class DocumentProcessor:
         )
 
         chunks = self._text_chunker.chunk_document(paper_id=paper_id, pages=cleaned_pages)
+        metadata = self._metadata_extractor.extract(pdf_path)
 
-        return ProcessedDocument(total_pages=parsed_document.page_count, chunks= tuple(chunks))
+        return ProcessedDocument(total_pages=parsed_document.page_count, chunks= tuple(chunks), metadata=metadata)
