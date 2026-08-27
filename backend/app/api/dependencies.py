@@ -10,6 +10,7 @@ from app.services.chat_service import ChatService
 from app.services.embedding_service import EmbeddingService
 from app.services.indexing_service import IndexingService
 from app.services.llm_service import LLMService
+from app.services.metadata_extractor import MetadataExtractor
 from app.services.paper_service import PaperService
 from app.services.pdf_parser import PDFParser
 from app.services.retrieval_service import RetrievalService
@@ -31,7 +32,8 @@ def get_paper_service() -> PaperService:
         document_processor=DocumentProcessor(
             pdf_parser=PDFParser(),
             text_cleaner=TextCleaner(),
-            text_chunker=TextChunker()
+            text_chunker=TextChunker(),
+            metadata_extractor=MetadataExtractor()
         ),
         vector_store = get_vector_store()
     )
