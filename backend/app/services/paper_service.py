@@ -80,6 +80,7 @@ class PaperService():
                 paper_id=paper.id, 
                 total_pages=processed_document.total_pages,
                 chunks=processed_document.chunks,
+                metadata=processed_document.metadata,
             )
         except PDFProcessingError:
             self._paper_repository.update_status(paper_id=paper_id,status= PaperStatus.FAILED)
