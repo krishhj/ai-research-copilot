@@ -15,6 +15,9 @@ class FakeVectorStore:
     def __init__(self):
         self.saved_chunks = ()
 
+    def delete_by_paper_id(self, paper_id):
+        self.deleted_paper_id = paper_id    
+
     def upsert(self, chunks, embedded_chunks):
         self.saved_chunks = chunks
 
@@ -39,7 +42,8 @@ def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
     repository.save_processing_result(
         paper_id=paper.id,
         total_pages=1,
-        chunks=chunks
+        chunks=chunks,
+        metadata=paper.metadata,
     )
 
     vector_store = FakeVectorStore()
