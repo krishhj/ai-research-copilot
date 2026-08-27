@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from app.api.dependencies import get_paper_service
 from app.main import create_app
 from app.services.document_processor import DocumentProcessor
+from app.services.metadata_extractor import MetadataExtractor
 from app.services.paper_service import PaperService
 from app.services.pdf_parser import PDFParser
 from app.services.text_cleaner import TextCleaner
@@ -33,6 +34,7 @@ def client(tmp_path):
                 pdf_parser=PDFParser(),
                 text_cleaner=TextCleaner(),
                 text_chunker=TextChunker(),
+                metadata_extractor=MetadataExtractor(),
             ),
             vector_store=vector_store,
         )
