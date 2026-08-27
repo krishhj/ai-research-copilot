@@ -1,6 +1,7 @@
 import pytest
 
 from app.services.document_processor import DocumentProcessor
+from app.services.metadata_extractor import MetadataExtractor
 from app.services.paper_service import PaperService
 from app.services.pdf_parser import PDFParser
 from app.services.text_cleaner import TextCleaner
@@ -24,6 +25,7 @@ def test_upload_paper_saves_pdf_and_returns_paper(tmp_path):
             pdf_parser=PDFParser(),
             text_cleaner=TextCleaner(),
             text_chunker=TextChunker(),
+            metadata_extractor=MetadataExtractor(),
         ),
         vector_store=vector_store,
     )
@@ -54,6 +56,7 @@ def test_upload_paper_rejects_non_pdf_file(tmp_path):
             pdf_parser=PDFParser(),
             text_cleaner=TextCleaner(),
             text_chunker=TextChunker(),
+            metadata_extractor=MetadataExtractor(),
         ),
         vector_store=vector_store,
     )
