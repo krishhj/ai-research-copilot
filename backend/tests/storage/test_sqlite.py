@@ -65,6 +65,7 @@ def test_save_processing_result_saves_chunks_and_updates_paper(tmp_path):
         paper_id=paper.id,
         total_pages=2,
         chunks=chunks,
+        metadata=paper.metadata,
     )
 
     saved_paper = repository.get_by_id(paper.id)
