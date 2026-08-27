@@ -23,6 +23,8 @@ class IndexingService:
 
         embedded_chunks = self._embedding_service.embed_chunks(chunks)
 
+        self._vector_store.delete_by_paper_id(paper_id)
+
         self._vector_store.upsert(
             chunks=chunks, 
             embedded_chunks=embedded_chunks
