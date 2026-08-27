@@ -147,7 +147,7 @@ class SQLitePaperRepository:
         connection.execute("PRAGMA foreign_keys = ON")
         return connection
 
-    def save_processing_result(self, paper_id: UUID, total_pages: int, chunks: tuple[Chunk, ...]) -> None:
+    def save_processing_result(self, paper_id: UUID, total_pages: int, chunks: tuple[Chunk, ...], metadata: PaperMetaData) -> None:
         """Save processed chunk and update the paper's processing metadata"""
         with self._connect() as connection:
             connection.execute(
@@ -180,10 +180,27 @@ class SQLitePaperRepository:
             cursor = connection.execute(
                 """
                 UPDATE papers
-                SET total_pages = ?, total_chunks = ?, status = ?
+                SET
+                    title = ?,
+                    authors = ?,
+                    abstract = ?,
+                    year = ?,
+                    doi = ?,
+                    journal = ?,
+                    keywords = ?,
+                    total_pages = ?,
+                    total_chunks = ?,
+                    status = ?
                 WHERE id = ?
                 """,
                 (
+                    metadata.title,
+                    json.dumps(metadata.authors),
+                    metadata.abstract,
+                    metadata.year,
+                    metadata.doi,
+                    metadata.journal,
+                    json.dumps(metadata.keywords),
                     total_pages,
                     len(chunks),
                     PaperStatus.PROCESSED.value,
