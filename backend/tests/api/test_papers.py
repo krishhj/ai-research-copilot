@@ -1,8 +1,10 @@
 import pytest
 import pymupdf
+from uuid import UUID
 from fastapi.testclient import TestClient
 
 from app.api.dependencies import get_paper_service
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.main import create_app
 from app.services.document_processor import DocumentProcessor
 from app.services.metadata_extractor import MetadataExtractor
@@ -13,6 +15,11 @@ from app.services.text_chunker import TextChunker
 from app.storage.chroma import ChromaVectorStore
 from app.storage.file_storage import FileStorage
 from app.storage.sqlite import SQLitePaperRepository
+
+TEST_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
+
+def fake_current_user() -> AuthenticatedUser:
+    return AuthenticatedUser(id=TEST_USER_ID, email="test@example.com")
 
 @pytest.fixture
 def client(tmp_path):
@@ -40,6 +47,7 @@ def client(tmp_path):
         )
 
     app.dependency_overrides[get_paper_service] = get_test_paper_service
+    app.dependency_overrides[get_current_user] = fake_current_user
 
     with TestClient(app) as test_client:
         yield test_client
@@ -77,7 +85,7 @@ def test_upload_non_pdf_returns_bad_request(client):
     )
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "Only PDF files are Supported."
+    assert response.json()["detail"] == "Only PDF files are supported."
 
 def test_list_papers_returns_uploaded_paper(client):
     client.post(
@@ -188,3 +196,21 @@ def test_process_paper_creates_chunks(client, tmp_path):
     assert paper["processing"]["status"] == "processed"
     assert paper["processing"]["total_pages"] == 1
     assert paper["processing"]["total_chunks"] > 0
+
+def test_uploading_duplicate_pdf_returns_conflict(client):
+    file_data = {
+        "file": (
+            "paper.pdf",
+            b"same PDF content",
+            "application/pdf",
+        ),
+    }
+
+    client.post("/api/v1/papers", files=file_data)
+
+    response = client.post("/api/v1/papers", files=file_data)
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == (
+        "This paper is already in your research library."
+    )
