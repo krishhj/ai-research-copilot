@@ -28,6 +28,12 @@ class PDFProcessingError(AppError):
     """Raised when PDF extraction or parsing fails"""
 
 
+class DuplicatePaperError(AppError):
+    """Raised when a user uploads the same PDF more than once."""
+
+    pass
+
+
 # Embeddings
 class EmbeddingError(AppError):
     """Raised when embedding generation fails"""
