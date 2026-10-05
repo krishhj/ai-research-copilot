@@ -43,5 +43,15 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # Frontend access
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+
+    # Supabase authentication
+    supabase_url: str
+    supabase_publishable_key: str
 
 settings = Settings()
+
