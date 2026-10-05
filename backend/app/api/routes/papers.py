@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from uuid import UUID
 
-from app.core.exceptions import PDFProcessingError
+from app.core.auth import AuthenticatedUser, get_current_user
+from app.core.exceptions import DuplicatePaperError, PDFProcessingError
 from app.api.dependencies import get_indexing_service,get_paper_service
 from app.models.enums import PaperStatus
 from app.models.paper_schemas import PaperListResponse, PaperUploadResponse,PaperDeleteResponse,PaperIndexResponse, PaperResponse
@@ -13,7 +14,8 @@ router = APIRouter(prefix="/papers", tags=["Paper"])
 @router.post("", response_model=PaperUploadResponse, status_code= status.HTTP_201_CREATED)
 async def upload_paper(
     file: UploadFile = File(...),
-    paper_service: PaperService = Depends(get_paper_service)
+    paper_service: PaperService = Depends(get_paper_service),
+    current_user: AuthenticatedUser = Depends(get_current_user),
 ) -> PaperUploadResponse:
     if file.filename is None:
         raise HTTPException(
@@ -25,7 +27,13 @@ async def upload_paper(
         paper = paper_service.upload_paper(
             content= await file.read(),
             original_filename= file.filename,
+            owner_id=current_user.id
         )
+    except DuplicatePaperError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(error),
+        ) from error
     except ValueError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -40,8 +48,9 @@ async def upload_paper(
 )
 def list_papers(
     paper_service: PaperService = Depends(get_paper_service),
+    current_user: AuthenticatedUser = Depends(get_current_user),
 ) -> PaperListResponse:
-    return PaperListResponse(papers=paper_service.list_papers())
+    return PaperListResponse(papers=paper_service.list_papers(owner_id=current_user.id))
 
 @router.get(
     "/{paper_id}",
@@ -49,10 +58,11 @@ def list_papers(
 )
 def get_paper(
     paper_id: UUID,
-    paper_service: PaperService = Depends(get_paper_service)
+    paper_service: PaperService = Depends(get_paper_service),
+    current_user: AuthenticatedUser = Depends(get_current_user),
 ) -> PaperResponse:
     """Return one uploaded paper by ID"""
-    paper = paper_service.get_paper(paper_id)
+    paper = paper_service.get_paper(paper_id, owner_id=current_user.id)
 
     if paper is None:
         raise HTTPException(
@@ -66,9 +76,9 @@ def get_paper(
     "/{paper_id}",
     response_model=PaperDeleteResponse
 )
-def delete_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper_service)) -> PaperDeleteResponse:
+def delete_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper_service),current_user: AuthenticatedUser = Depends(get_current_user),) -> PaperDeleteResponse:
     """Delete one uploaded paper"""
-    deleted = paper_service.delete_paper(paper_id)
+    deleted = paper_service.delete_paper(paper_id, owner_id=current_user.id)
 
     if not deleted:
         raise HTTPException(
@@ -80,10 +90,10 @@ def delete_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper
 
 
 @router.post("/{paper_id}/process", response_model=PaperResponse)
-def process_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper_service)) -> PaperResponse:
+def process_paper(paper_id: UUID, paper_service: PaperService = Depends(get_paper_service),current_user: AuthenticatedUser = Depends(get_current_user),) -> PaperResponse:
     """Extract and store searchable chunks for one uploaded paper"""
     try:
-        paper = paper_service.process_paper(paper_id=paper_id)
+        paper = paper_service.process_paper(paper_id=paper_id, owner_id=current_user.id)
     except PDFProcessingError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -102,10 +112,11 @@ def process_paper(paper_id: UUID, paper_service: PaperService = Depends(get_pape
 def index_paper(
     paper_id: UUID,
     paper_service: PaperService = Depends(get_paper_service),
+    current_user: AuthenticatedUser = Depends(get_current_user),
     indexing_service: IndexingService = Depends(get_indexing_service)
 ) -> PaperIndexResponse:
     """Create and store vector embeddings for a processed paper"""
-    paper = paper_service.get_paper(paper_id=paper_id)
+    paper = paper_service.get_paper(paper_id=paper_id, owner_id=current_user.id)
 
     if paper is None:
         raise HTTPException(
@@ -119,7 +130,10 @@ def index_paper(
             detail="Paper must be processed before indexing."
         )
 
-    indexed_chunks = indexing_service.index_paper(paper_id)
+    indexed_chunks = indexing_service.index_paper(
+        paper_id=paper_id,
+        owner_id=current_user.id,
+    )
 
     return PaperIndexResponse(
         message="Paper indexed successfully.",
