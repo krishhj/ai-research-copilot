@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: ai-research-copilot-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: DATABASE_PATH
+        value: data/database/papers.db
+      - key: VECTOR_STORE_PATH
+        value: data/vector_store
+      - key: EMBEDDING_MODEL
+        value: sentence-transformers/all-mpnet-base-v2
+      - key: CHUNK_SIZE
+        value: "800"
+      - key: CHUNK_OVERLAP
+        value: "200"
+      - key: TOP_K
+        value: "5"
+      - key: TEMPERATURE
+        value: "0.2"
+      - key: MAX_TOKENS
+        value: "1024"
+      # Set these secret values in the Render dashboard:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
