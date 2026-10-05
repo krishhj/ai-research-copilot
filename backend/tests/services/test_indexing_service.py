@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from app.models.chunk import Chunk
 from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
@@ -15,11 +15,13 @@ class FakeVectorStore:
     def __init__(self):
         self.saved_chunks = ()
 
-    def delete_by_paper_id(self, paper_id):
+    def delete_by_paper_id(self, paper_id, owner_id):
         self.deleted_paper_id = paper_id    
 
-    def upsert(self, chunks, embedded_chunks):
+    def upsert(self, chunks, embedded_chunks, owner_id):
         self.saved_chunks = chunks
+
+TEST_OWNER_ID = UUID("00000000-0000-0000-0000-000000000001")
 
 def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
     repository = SQLitePaperRepository(tmp_path / "papers.db")
@@ -28,7 +30,7 @@ def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
         metadata=PaperMetaData(title="Attention Is All You Need"),
         processing=ProcessingMetadata(stored_filename="attention.pdf")
         )
-    repository.add(paper)
+    repository.add(paper, TEST_OWNER_ID)
 
     chunks = (
         Chunk(
@@ -41,6 +43,7 @@ def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
     )
     repository.save_processing_result(
         paper_id=paper.id,
+        owner_id=TEST_OWNER_ID,
         total_pages=1,
         chunks=chunks,
         metadata=paper.metadata,
@@ -53,9 +56,9 @@ def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
         vector_store=vector_store
     )
 
-    indexed_chunks = service.index_paper(paper.id)
+    indexed_chunks = service.index_paper(paper.id, owner_id=TEST_OWNER_ID)
 
-    saved_chunks = repository.list_chunks_by_paper_id(paper.id)
+    saved_chunks = repository.list_chunks_by_paper_id(paper.id, TEST_OWNER_ID)
 
     assert indexed_chunks == 1
     assert vector_store.saved_chunks == chunks
