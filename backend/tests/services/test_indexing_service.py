@@ -30,7 +30,12 @@ def test_index_paper_stores_vectors_and_marks_chunks_embedded(tmp_path):
         metadata=PaperMetaData(title="Attention Is All You Need"),
         processing=ProcessingMetadata(stored_filename="attention.pdf")
         )
-    repository.add(paper, TEST_OWNER_ID)
+    
+    repository.add(
+        paper,
+        TEST_OWNER_ID,
+        content_hash="test-content-hash",
+    )
 
     chunks = (
         Chunk(

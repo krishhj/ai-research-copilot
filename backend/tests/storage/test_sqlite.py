@@ -23,7 +23,11 @@ def test_add_and_list_papers(tmp_path):
 
     owner_id = uuid4()
 
-    repository.add(paper=paper, owner_id=owner_id)
+    repository.add(
+        paper=paper,
+        owner_id=owner_id,
+        content_hash="test-content-hash",
+    )
 
     papers = repository.list_by_owner(owner_id)
 
@@ -47,7 +51,11 @@ def test_save_processing_result_saves_chunks_and_updates_paper(tmp_path):
 
     owner_id = uuid4()
 
-    repository.add(paper=paper, owner_id=owner_id)
+    repository.add(
+        paper=paper,
+        owner_id=owner_id,
+        content_hash="test-content-hash",
+    )
 
     chunks = (
         Chunk(
@@ -99,7 +107,11 @@ def test_owner_cannot_access_another_users_paper(tmp_path):
         ),
     )
 
-    repository.add(paper, owner_a)
+    repository.add(
+        paper=paper,
+        owner_id=owner_a,
+        content_hash="test-content-hash",
+    )
 
     assert repository.list_by_owner(owner_b) == []
 

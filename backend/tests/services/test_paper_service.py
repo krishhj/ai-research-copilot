@@ -111,4 +111,43 @@ def test_upload_paper_rejects_duplicate_for_same_user(tmp_path):
             original_filename="renamed-paper.pdf",
             owner_id=TEST_OWNER_ID,
         )
+
+def test_upload_allows_same_pdf_for_different_users(tmp_path):
+    storage = FileStorage(base_directory=tmp_path)
+    repository = SQLitePaperRepository(
+        database_path=tmp_path / "papers.db",
+    )
+    vector_store = ChromaVectorStore(
+        persist_directory=tmp_path / "chroma",
+    )
+
+    service = PaperService(
+        file_storage=storage,
+        paper_repository=repository,
+        document_processor=DocumentProcessor(
+            pdf_parser=PDFParser(),
+            text_cleaner=TextCleaner(),
+            text_chunker=TextChunker(),
+            metadata_extractor=MetadataExtractor(),
+        ),
+        vector_store=vector_store,
+    )
+
+    content = b"same PDF content"
+    owner_a = TEST_OWNER_ID
+    owner_b = UUID("00000000-0000-0000-0000-000000000002")
+
+    paper_a = service.upload_paper(
+        content=content,
+        original_filename="paper.pdf",
+        owner_id=owner_a,
+    )
+
+    paper_b = service.upload_paper(
+        content=content,
+        original_filename="paper.pdf",
+        owner_id=owner_b,
+    )
+
+    assert paper_a.id != paper_b.id
 
