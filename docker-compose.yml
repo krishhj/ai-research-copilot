@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: ./backend
+    container_name: ai-research-copilot-api
+    env_file:
+      - ./backend/.env
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      DATA_DIR: /data
+      DATABASE_PATH: /data/database/papers.db
+      VECTOR_STORE_PATH: /data/vector_store
+    ports:
+      - "8000:8000"
+    volumes:
+      - research_data:/data
+    restart: unless-stopped
+
+volumes:
+  research_data:
