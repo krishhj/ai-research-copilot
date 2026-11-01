@@ -1,10 +1,12 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Query(BaseModel):
     """Represents a user's retrieval request"""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     question: str = Field(min_length=1, description="User's Question")
 
