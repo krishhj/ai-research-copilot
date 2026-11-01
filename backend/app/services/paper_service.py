@@ -2,6 +2,7 @@ import hashlib
 from pathlib import Path
 from uuid import UUID, uuid4
 
+from app.core.constants import MAX_UPLOAD_SIZE_MB
 from app.core.exceptions import DuplicatePaperError, PDFProcessingError
 from app.models.enums import PaperStatus
 from app.models.paper import Paper, PaperMetaData, ProcessingMetadata
@@ -35,6 +36,9 @@ class PaperService:
         """Store a PDF for its authenticated owner."""
         if Path(original_filename).suffix.lower() != ".pdf":
             raise ValueError("Only PDF files are supported.")
+
+        if len(content) > MAX_UPLOAD_SIZE_MB * 1024 * 1024:
+            raise ValueError(f"PDF files must be {MAX_UPLOAD_SIZE_MB} MB or smaller.")
 
         content_hash = hashlib.sha256(content).hexdigest()
 
@@ -137,6 +141,8 @@ class PaperService:
                 chunks=processed_document.chunks,
                 metadata=processed_document.metadata,
             )
+            # Old vectors point at chunk IDs that were just replaced.
+            self._vector_store.delete_by_paper_id(paper_id, owner_id)
         except PDFProcessingError:
             self._paper_repository.update_status(
                 paper_id,
