@@ -130,6 +130,12 @@ def index_paper(
             detail="Paper must be processed before indexing."
         )
 
+    if paper.processing.total_chunks == 0:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="No text could be extracted from this PDF. Scanned papers are not supported."
+        )
+
     indexed_chunks = indexing_service.index_paper(
         paper_id=paper_id,
         owner_id=current_user.id,
