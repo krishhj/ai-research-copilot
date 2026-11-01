@@ -18,7 +18,7 @@ class FileStorage:
     def delete(self, stored_filename: str) -> None:
         """Delete one stored file."""
         file_path = self._base_directory / stored_filename
-        file_path.unlink()
+        file_path.unlink(missing_ok=True)
 
     def get_path(self, stored_filename: str) -> Path:
         """Return the path for one stored file"""
