@@ -116,7 +116,7 @@ Question: {query.question}
             confidence=(
                 max(result.score for result in results)
                 if results
-                else 1.0
+                else 0.0
             ),
             generation_time=perf_counter() - start_time,
         )
