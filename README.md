@@ -98,7 +98,12 @@ This is a **dense RAG pipeline with reranking**:
 - **Top-k context selection:** only the most relevant chunks are sent to the LLM.
 - **Citation-grounded generation:** answers are paired with the original paper and page numbers.
 - **Private retrieval:** every vector search is filtered to the authenticated user's library.
-- **Reranking:** the top 20 vector results are rescored with a cross-encoder (`ms-marco-MiniLM-L6-v2`) and the best 5 go to the LLM. On 25 test questions (`backend/evaluation/`) Recall@1 went from 0.64 to 0.88, at about 2 s extra per query on CPU.
+- **Reranking:** the top 20 vector results are rescored with a cross-encoder (`ms-marco-MiniLM-L6-v2`) and the best 5 go to the LLM. On 25 test questions (`backend/evaluation/`) Recall@1 went from 0.64 to 0.88 and MRR from 0.77 to 0.92, at about 2 s extra per query on CPU.
+
+| Setup | Recall@1 | Recall@3 | Recall@5 | MRR |
+|---|---|---|---|---|
+| Dense only | 0.64 | 0.92 | 0.92 | 0.77 |
+| Dense + rerank | 0.88 | 0.96 | 0.96 | 0.92 |
 
 It intentionally does not yet include hybrid BM25 search, query rewriting, background workers, or conversational memory. Those are planned scalability and quality improvements, not hidden implementation claims.
 
@@ -267,7 +272,7 @@ Version 1 prioritises a transparent, end-to-end RAG workflow and local developer
 - Object storage for original PDFs.
 - Postgres for relational data and `pgvector` or a managed vector database for embeddings.
 - A background queue for long-running PDF processing and indexing.
-- Hybrid retrieval and reranking for stronger relevance.
+- Hybrid BM25 and dense retrieval for stronger relevance on exact terms.
 - DOI/title-based duplicate matching in addition to file hashing.
 - Observability, rate limiting, audit logs, and automated deployment checks.
 
