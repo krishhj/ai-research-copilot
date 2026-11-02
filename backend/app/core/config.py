@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     # Retrieval Chunks
     top_k: int = 5
 
+    # Reranking
+    rerank_enabled: bool = True
+    reranker_model: str = "cross-encoder/ms-marco-MiniLM-L6-v2"
+    rerank_candidates: int = 20
+
     # LLM
     groq_api_key: str
     groq_model: str = "openai/gpt-oss-20b"
