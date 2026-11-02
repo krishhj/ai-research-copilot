@@ -1,7 +1,8 @@
 from groq import Groq
 from functools import lru_cache
 
-from sentence_transformers import SentenceTransformer
+import torch
+from sentence_transformers import CrossEncoder, SentenceTransformer
 
 from app.core.config import settings
 from app.core.constants import PAPERS_DIR, PAPERS_DATABASE_PATH, VECTOR_STORE_DIR
@@ -13,6 +14,7 @@ from app.services.llm_service import LLMService
 from app.services.metadata_extractor import MetadataExtractor
 from app.services.paper_service import PaperService
 from app.services.pdf_parser import PDFParser
+from app.services.reranker_service import RerankerService
 from app.services.retrieval_service import RetrievalService
 from app.services.text_cleaner import TextCleaner
 from app.services.text_chunker import TextChunker
@@ -57,11 +59,23 @@ def get_indexing_service() -> IndexingService:
         vector_store= get_vector_store()
     )
 
+@lru_cache
+def get_reranker_service() -> RerankerService | None:
+    """Create the shared reranker model, or None when reranking is turned off."""
+    if not settings.rerank_enabled:
+        return None
+
+    # Sigmoid keeps scores between 0 and 1, max_length=256 keeps it fast on CPU
+    model = CrossEncoder(settings.reranker_model, max_length=256, activation_fn=torch.nn.Sigmoid())
+    return RerankerService(model=model)
+
 def get_retrieval_service() -> RetrievalService:
     """Provide the semantic-retrieval service"""
     return RetrievalService(
         embedding_service=get_embedding_service(),
-        vector_store=get_vector_store()
+        vector_store=get_vector_store(),
+        reranker_service=get_reranker_service(),
+        rerank_candidates=settings.rerank_candidates
     )
 
 @lru_cache
