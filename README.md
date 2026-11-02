@@ -92,14 +92,15 @@ User question
 
 ### RAG approach
 
-This is a **single-stage dense RAG** pipeline:
+This is a **dense RAG pipeline with reranking**:
 
 - **Dense retrieval:** sentence embeddings find semantically related text, not just exact keyword matches.
 - **Top-k context selection:** only the most relevant chunks are sent to the LLM.
 - **Citation-grounded generation:** answers are paired with the original paper and page numbers.
 - **Private retrieval:** every vector search is filtered to the authenticated user's library.
+- **Reranking:** the top 20 vector results are rescored with a cross-encoder (`ms-marco-MiniLM-L6-v2`) and the best 5 go to the LLM. On 25 test questions (`backend/evaluation/`) Recall@1 went from 0.64 to 0.88, at about 2 s extra per query on CPU.
 
-It intentionally does not yet include hybrid BM25 search, reranking, query rewriting, background workers, or conversational memory. Those are planned scalability and quality improvements, not hidden implementation claims.
+It intentionally does not yet include hybrid BM25 search, query rewriting, background workers, or conversational memory. Those are planned scalability and quality improvements, not hidden implementation claims.
 
 ## Key engineering decisions
 
