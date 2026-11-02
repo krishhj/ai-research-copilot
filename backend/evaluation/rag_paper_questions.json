@@ -1,0 +1,30 @@
+{
+  "paper": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (Lewis et al., 2020)",
+  "questions": [
+    {"id": 1, "question": "How does the RAG-Sequence model use retrieved documents to generate an answer?", "expected_pages": [3]},
+    {"id": 2, "question": "Which Wikipedia dump is used as the knowledge source?", "expected_pages": [4]},
+    {"id": 3, "question": "Why is the document encoder not updated during training?", "expected_pages": [4]},
+    {"id": 4, "question": "What is Thorough Decoding and when is it needed?", "expected_pages": [4]},
+    {"id": 5, "question": "How are Wikipedia articles split into documents for the index?", "expected_pages": [4]},
+    {"id": 6, "question": "Which metric is used to evaluate Jeopardy question generation?", "expected_pages": [5]},
+    {"id": 7, "question": "How large are the train, dev and test splits for Jeopardy question generation?", "expected_pages": [5]},
+    {"id": 8, "question": "How does the retriever find the top documents in sub-linear time?", "expected_pages": [3]},
+    {"id": 9, "question": "What accuracy does RAG get on NQ when the correct answer is in none of the retrieved documents?", "expected_pages": [6]},
+    {"id": 10, "question": "By how many BLEU points does RAG-Sequence beat BART on MS-MARCO?", "expected_pages": [6]},
+    {"id": 11, "question": "In human evaluation, how often was RAG judged more factual than BART for Jeopardy questions?", "expected_pages": [6, 8]},
+    {"id": 12, "question": "What happens to performance when BM25 replaces the dense retriever?", "expected_pages": [7, 8]},
+    {"id": 13, "question": "How accurate is RAG when the 2016 Wikipedia index is used for 2016 world leaders?", "expected_pages": [8]},
+    {"id": 14, "question": "Can the knowledge of RAG be updated by swapping its document index?", "expected_pages": [7, 8, 9]},
+    {"id": 15, "question": "How diverse are RAG generations compared with BART, measured by distinct tri-grams?", "expected_pages": [7, 8]},
+    {"id": 16, "question": "What happens to performance when more documents are retrieved at test time?", "expected_pages": [8]},
+    {"id": 17, "question": "Why is the RAG memory human-readable and human-writable?", "expected_pages": [9]},
+    {"id": 18, "question": "What are the potential negative societal impacts of RAG?", "expected_pages": [10]},
+    {"id": 19, "question": "How many retrieved documents are used for RAG-Sequence models in open-domain QA?", "expected_pages": [17]},
+    {"id": 20, "question": "What GPUs were used to train the RAG models?", "expected_pages": [17]},
+    {"id": 21, "question": "How much CPU memory does the full Wikipedia document index need?", "expected_pages": [17]},
+    {"id": 22, "question": "How are the CuratedTrec regular-expression answers turned into training targets?", "expected_pages": [18]},
+    {"id": 23, "question": "How many training examples does Natural Questions contain?", "expected_pages": [19]},
+    {"id": 24, "question": "What is retrieval collapse and why might it happen?", "expected_pages": [19]},
+    {"id": 25, "question": "How many vectors are stored in the non-parametric memory index?", "expected_pages": [4, 19]}
+  ]
+}
