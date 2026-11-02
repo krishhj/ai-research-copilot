@@ -16,6 +16,7 @@ RUN python -m pip install --upgrade pip && \
 
 # Include the embedding model so a restarted container does not download it again
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-mpnet-base-v2')"
+RUN python -c "from sentence_transformers import CrossEncoder; CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')"
 
 COPY app ./app
 
