@@ -199,6 +199,9 @@ export function ChatPanel() {
                           key={citation.chunk_id}
                           className="flex items-center gap-1.5 rounded-lg border border-white/5 bg-black/20 px-3 py-1.5 text-xs text-indigo-100"
                         >
+                          <span className="font-semibold text-indigo-300">
+                            [{message.answer!.citations.indexOf(citation) + 1}]
+                          </span>
                           <span className="font-medium">
                             {citation.paper_title}
                           </span>
