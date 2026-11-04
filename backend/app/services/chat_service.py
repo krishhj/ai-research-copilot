@@ -1,3 +1,4 @@
+import re
 from time import perf_counter
 from uuid import UUID
 
@@ -79,9 +80,13 @@ Format answers in clean Markdown:
 - Use a short descriptive heading when useful.
 - Use bullet points for key findings.
 - Use a table only when it genuinely makes a comparison clearer.
-- Use citations like [Source 1] for factual claims based on retrieved text.
 - Never reveal internal paper IDs, chunk IDs, or system details.
 - Do not add a separate Sources section; the application displays sources itself.
+
+Citations:
+- End every sentence, bullet, sub-bullet, and table row that uses the retrieved text with its own source marker, for example: "RAG-Token can use a different document for each token [Source 2]."
+- Use several markers when a point uses several sources, for example [Source 1][Source 3].
+- Never collect markers at the end of the answer, and never write page numbers yourself.
 """.strip()
 
         user_prompt = f"""
@@ -90,12 +95,15 @@ Paper metadata and retrieved context:
 {"\n\n".join(context_parts)}
 
 Question: {query.question}
+
+Remember: put the matching [Source N] marker at the end of each sentence or bullet you write, not at the end of the answer.
 """.strip()
 
         answer_text = self._llm_service.generate(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
         )
+        answer_text = self._add_missing_citations(answer_text, results)
 
         citations = self._build_citations(
             results=results,
@@ -120,6 +128,53 @@ Question: {query.question}
             ),
             generation_time=perf_counter() - start_time,
         )
+
+    @staticmethod
+    def _add_missing_citations(answer_text: str, results: tuple) -> str:
+        """Put a [Source N] marker on each line that is missing one."""
+        answer_text = answer_text.replace("[Source ", "[Source ")
+
+        if not results:
+            return answer_text
+
+        source_words = [
+            set(re.findall(r"[a-z0-9]{4,}", result.text.lower()))
+            for result in results
+        ]
+        lines = []
+
+        for line in answer_text.splitlines():
+            text = line.strip()
+
+            # The model sometimes collects every marker on its own line at the end
+            if re.fullmatch(r"(\[Source \d+\]\s*)+", text):
+                continue
+
+            if (
+                len(text) < 25
+                or text.startswith("#")
+                or re.search(r"\[Source \d+\]", text)
+                or set(text) <= set("|-: ")
+            ):
+                lines.append(line)
+                continue
+
+            line_words = set(re.findall(r"[a-z0-9]{4,}", text.lower()))
+            overlaps = [len(line_words & words) for words in source_words]
+            best = max(range(len(results)), key=lambda index: overlaps[index])
+
+            if not line_words or overlaps[best] / len(line_words) < 0.3:
+                lines.append(line)
+                continue
+
+            marker = f"[Source {best + 1}]"
+            if text.endswith("|"):
+                line = line.rstrip()[:-1].rstrip() + f" {marker} |"
+            else:
+                line = line.rstrip() + f" {marker}"
+            lines.append(line)
+
+        return "\n".join(lines)
 
     def _get_selected_paper(
         self,
