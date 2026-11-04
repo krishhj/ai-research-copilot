@@ -35,18 +35,6 @@ function uniqueCitations(citations: Citation[]): Citation[] {
   );
 }
 
-function confidenceLabel(confidence: number) {
-  if (confidence >= 0.7) {
-    return { text: "High", className: "text-emerald-400" };
-  }
-
-  if (confidence >= 0.3) {
-    return { text: "Medium", className: "text-amber-400" };
-  }
-
-  return { text: "Low", className: "text-red-400" };
-}
-
 function MarkdownAnswer({ content }: { content: string }) {
   return (
     <div className="markdown-answer">
@@ -225,14 +213,6 @@ export function ChatPanel() {
                   </div>
 
                   <div className="mt-4 flex items-center gap-2 text-[11px] text-slate-400">
-                    <span
-                      className={confidenceLabel(message.answer.confidence).className}
-                      title="How closely the best source matches your question. It does not check that the answer is correct."
-                    >
-                      Confidence {Math.round(message.answer.confidence * 100)}% ·{" "}
-                      {confidenceLabel(message.answer.confidence).text}
-                    </span>
-                    <span>·</span>
                     <span>{message.answer.generation_time.toFixed(1)}s generation</span>
                   </div>
                 </div>
