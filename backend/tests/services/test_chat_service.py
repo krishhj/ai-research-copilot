@@ -56,7 +56,31 @@ def test_leaves_unrelated_lines_uncited():
     assert ChatService._add_missing_citations(answer, RESULTS) == answer
 
 
-def test_normalizes_non_breaking_space_in_markers():
-    answer = "- The index can be outdated [Source 2]."
+def test_normalizes_special_spaces_in_markers():
+    answer = "- The index can be outdated [Source 2]. It can be swapped [Source 2]."
 
-    assert ChatService._add_missing_citations(answer, RESULTS) == "- The index can be outdated [Source 2]."
+    assert ChatService._add_missing_citations(answer, RESULTS) == (
+        "- The index can be outdated [Source 2]. It can be swapped [Source 2]."
+    )
+
+
+def test_removes_repeated_markers():
+    answer = "- RAG-Sequence uses the same retrieved document [Source 1] [Source 1]."
+
+    assert ChatService._add_missing_citations(answer, RESULTS) == (
+        "- RAG-Sequence uses the same retrieved document [Source 1]."
+    )
+
+
+def test_does_not_cite_table_header_row():
+    answer = (
+        "| Retrieved document usage for the whole output | Notes |\n"
+        "|---|---|\n"
+        "| RAG-Sequence uses the same retrieved document | Whole output |"
+    )
+
+    assert ChatService._add_missing_citations(answer, RESULTS).splitlines() == [
+        "| Retrieved document usage for the whole output | Notes |",
+        "|---|---|",
+        "| RAG-Sequence uses the same retrieved document | Whole output [Source 1] |",
+    ]
