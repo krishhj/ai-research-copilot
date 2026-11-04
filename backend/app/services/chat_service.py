@@ -132,7 +132,9 @@ Remember: put the matching [Source N] marker at the end of each sentence or bull
     @staticmethod
     def _add_missing_citations(answer_text: str, results: tuple) -> str:
         """Put a [Source N] marker on each line that is missing one."""
-        answer_text = answer_text.replace("[Source ", "[Source ")
+        # The model sometimes writes markers with special spaces or repeats them
+        answer_text = re.sub(r"\[Source\s*(\d+)\]", r"[Source \1]", answer_text)
+        answer_text = re.sub(r"(\[Source (\d+)\])(\s*\[Source \2\])+", r"\1", answer_text)
 
         if not results:
             return answer_text
@@ -141,10 +143,17 @@ Remember: put the matching [Source N] marker at the end of each sentence or bull
             set(re.findall(r"[a-z0-9]{4,}", result.text.lower()))
             for result in results
         ]
+        answer_lines = answer_text.splitlines()
         lines = []
 
-        for line in answer_text.splitlines():
+        for index, line in enumerate(answer_lines):
             text = line.strip()
+            next_line = answer_lines[index + 1].strip() if index + 1 < len(answer_lines) else ""
+
+            # A table header row is followed by a |---|---| line and needs no marker
+            if text.startswith("|") and next_line and set(next_line) <= set("|-: "):
+                lines.append(line)
+                continue
 
             # The model sometimes collects every marker on its own line at the end
             if re.fullmatch(r"(\[Source \d+\]\s*)+", text):
